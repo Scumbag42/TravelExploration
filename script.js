@@ -110,23 +110,23 @@ function renderTop15() {
         card.className = 'top15-card';
         // 前3名特殊样式
         if (spot.rank <= 3) card.classList.add(`top15-rank-${spot.rank}`);
-        card.innerHTML = `
-            <div class="top15-badge">${spot.rank}</div>
-            <div class="top15-img">
-                <img src="${spot.img}" alt="${spot.name}" loading="lazy"
-                     onerror="this.parentElement.innerHTML='<div class=\'top15-img-fallback\'>暂无图片</div>'">
-            </div>
-            <div class="top15-info">
-                <div class="top15-name">${spot.name}</div>
-                <div class="top15-loc">${spot.province} · ${spot.city}</div>
-                <div class="top15-heat">
-                    <span class="top15-heat-bar">
-                        <span class="top15-heat-fill" style="width:${(spot.heat / top15Spots[0].heat * 100).toFixed(0)}%"></span>
-                    </span>
-                    <span class="top15-heat-num">🔥 ${spot.heat}</span>
-                </div>
-            </div>
-        `;
+       card.innerHTML = `
+    <div class="top15-badge">${spot.rank}</div>
+    <div class="top15-img">
+        <img src="${spot.img}" alt="${spot.name}" loading="lazy"
+             onerror="this.parentElement.innerHTML='<div class=\\'top15-img-fallback\\'>暂无图片</div>'">
+    </div>
+    <div class="top15-info">
+        <div class="top15-name">${spot.name}</div>
+        <div class="top15-loc">${spot.province} · ${spot.city}</div>
+        <div class="top15-heat">
+            <span class="top15-heat-bar">
+                <span class="top15-heat-fill" style="width:${(spot.heat / top15Spots[0].heat * 100).toFixed(0)}%"></span>
+            </span>
+            <span class="top15-heat-num">🔥 ${spot.heat}</span>
+        </div>
+    </div>
+`;
         // 点击跳转到对应景点
         card.onclick = () => {
             cameFromSearch = false;
