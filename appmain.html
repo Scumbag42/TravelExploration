@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>华夏足迹 - 探索中国大美山河</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="province-card-anim.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">详细</div>
+        <div class="navbar-search">
+            <input type="text" id="globalSearch" placeholder="搜索省份、城市、景点...">
+        </div>
+
+       <div class="navbar-right">
+    <button class="nav-btn" onclick="scrollToTop()">顶部</button>
+    <button class="nav-btn" onclick="scrollToBottom()">底部</button>
+    <label class="switch">
+        <input id="themeCheck" type="checkbox">
+        <span class="slider"></span>
+    </label>
+</div>
+   
+
+    </div>
+
+    <div id="provincePage" class="page active">
+        <!-- TOP 15：原样普通布局 -->
+        <div id="top15Section">
+            <h1 class="section-title">🔥 全国景点热度 TOP 15</h1>
+            <div id="top15Grid" class="top15-grid"></div>
+        </div>
+
+        <!-- 34省：GTA VI sticky 视差分屏 -->
+        <section class="panel panel-hero">
+            <div class="panel-bg"></div>
+            <div class="panel-content">
+                <h1 class="hero-title">探索</h1>
+                <p class="hero-sub">34个地区</p>
+                <div class="hero-scroll-hint">↓ 向下滚动</div>
+            </div>
+        </section>
+
+        <!-- 34省：直接放在页面里，不用 panel 包裹 -->
+        <div class="provinces-section">
+            <h1 class="page-title">中国34个省级行政区</h1>
+            <div id="provinceGrid" class="card-grid"></div>
+        </div>
+    </div>
+
+    <!-- 城市页：左侧天气卡片 + 右侧内容 -->
+    <div id="cityPage" class="page">
+        <div class="weather-sidebar"></div>
+        <div class="page-content">
+            <button class="back-btn" onclick="goBack('province')">← 返回省份</button>
+            <h1 class="page-title" id="cityTitle">城市列表</h1>
+            <div id="cityGrid" class="card-grid"></div>
+        </div>
+    </div>
+
+    <!-- 景点页：左侧天气卡片 + 右侧内容 -->
+    <div id="spotPage" class="page">
+        <div class="weather-sidebar"></div>
+        <div class="page-content">
+            <button class="back-btn" onclick="goBack('city')">← 返回城市</button>
+            <button class="back-btn" onclick="goHome()" style="margin-left:8px;">🏠 返回首页</button>
+            <h1 class="page-title" id="spotTitle">景点列表</h1>
+            <div id="spotGrid" class="card-grid"></div>
+        </div>
+    </div>
+
+   
+
+    <!-- 图片查看器容器 -->
+<div id="imageViewer" class="viewer hidden">
+    <div class="viewer-bg" onclick="closeViewer()"></div>
+    <button class="nav left" onclick="prevImage()">‹</button>
+    <button class="nav right" onclick="nextImage()">›</button>
+    <div class="viewer-stage">
+        <img id="viewerImg" />
+        <button class="close" onclick="closeViewer()">×</button>
+    </div>
+</div>
+
+ <script src="data.js"></script>
+    <script src="top15.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

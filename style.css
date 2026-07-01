@@ -1,0 +1,795 @@
+/* 全局主题变量 - 默认深色模式 */
+:root {
+    --bg-gradient-from: #0f0104;
+    --bg-gradient-to: #1a1a24;
+    --text-main: #f5f5f7;
+    --text-sub: #86868b;
+    --card-bg: rgba(30, 30, 40, 0.92);
+    --nav-bg: rgba(22, 22, 26, 0.92);
+    --input-bg: #2c2c38;
+    --input-focus-bg: #383848;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.25);
+    --shadow-light: rgba(255, 255, 255, 0.04);
+    --accent-blue: #007aff;
+    /* 新增：按钮通用背景色变量 */
+    --btn-bg: rgba(60, 60, 70, 0.5);
+    --btn-hover-bg: rgba(80, 80, 90, 0.7);
+    --light-btn-bg: rgba(210, 212, 220, 0.6);
+    --light-btn-hover-bg: rgba(190, 194, 205, 0.75);
+}
+html.light-mode {
+    --bg-gradient-from: #f6f7fb;
+    --bg-gradient-to: #e9ecf5;
+    --text-main: #1d1d1f;
+    --text-sub: #6e6e73;
+    --card-bg: rgba(255, 255, 255, 0.92);
+    --nav-bg: rgba(255, 255, 255, 0.92);
+    --input-bg: #dde1ec;
+    --input-focus-bg: #ffffff;
+    --border-light: rgba(0, 0, 0, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.12);
+    --shadow-light: rgba(255, 255, 255, 0.8);
+    --accent-blue: #007aff;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-from) 0%, var(--bg-gradient-to) 100%);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-top: 56px;
+    overflow-x: hidden;
+}
+/* 顶部导航栏 */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border-light);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+.navbar-left {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+.navbar-search {
+    width: 40%;
+    position: relative;
+}
+.navbar-search input {
+    width: 100%;
+    height: 42px;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 0 18px;
+    color: var(--text-main);
+    font-size: 14px;
+    background-color: var(--input-bg);
+    box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.4);
+    transition: all 300ms ease-in-out;
+}
+.navbar-search input:focus {
+    background-color: var(--input-focus-bg);
+    transform: scale(1.03);
+    box-shadow: 10px 10px 30px var(--shadow-dark),
+                -8px -8px 24px var(--shadow-light);
+}
+.navbar-search input::placeholder {
+    color: var(--text-sub);
+}
+.navbar-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.nav-btn {
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 6px;
+    color: var(--text-main);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+html.light-mode .nav-btn {
+    background: var(--light-btn-bg);
+}
+.nav-btn:hover {
+    background: var(--btn-hover-bg);
+}
+html.light-mode .nav-btn:hover {
+    background: var(--light-btn-hover-bg);
+}
+/* 页面容器 */
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: none;
+    animation: pageFadeIn 0.5s ease forwards;
+    flex-direction: row;
+    gap: 24px;
+}
+.page.active {
+    display: flex;
+}
+#provincePage.page {
+    flex-direction: column;
+    max-width: none;
+    padding: 0;
+    overflow: visible;
+}
+#provincePage.page.active {
+    display: block;
+}
+/* TOP 15 区域 — 保持原有普通布局 */
+#top15Section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 40px;
+}
+/* =============================================
+   GTA VI 视差分屏系统
+   3层叠加：sticky + transform + opacity/blur
+   ============================================= */
+.panel {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    will-change: transform, opacity;
+    /* 默认状态：被下一屏覆盖前的初始形态 */
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    filter: blur(0px);
+    transition: none; /* 由 JS 实时控制，不要 CSS transition */
+}
+.panel-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+.panel-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    overflow-y: auto;
+}
+/* ---- Layer 1: Hero 首屏 ---- */
+.panel-hero {
+    /* 自然 DOM 顺序，底层 */
+}
+.panel-hero .panel-bg {
+    background:
+        radial-gradient(ellipse at 30% 50%, rgba(0,122,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(255,45,85,0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #0a0014 0%, #0d1b2a 40%, #1a0a2e 100%);
+}
+.hero-title {
+    font-size: clamp(36px, 8vw, 80px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 12px;
+    text-shadow: 0 0 40px rgba(0,122,255,0.15), 0 4px 20px rgba(0,0,0,0.4);
+    margin-bottom: 16px;
+}
+.hero-sub {
+    font-size: clamp(14px, 2vw, 20px);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 6px;
+}
+.hero-scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 4px;
+    animation: hintBounce 2s ease-in-out infinite;
+}
+@keyframes hintBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+}
+/* ---- Layer 3: 省份列表（不用 panel，直接放页面里）---- */
+.provinces-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
+}
+/* =============================================
+   热度排名 TOP 15
+   ============================================= */
+#top15Section {
+    margin-bottom: 40px;
+}
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--text-main);
+    letter-spacing: 2px;
+}
+.top15-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+.top15-card {
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--border-light);
+    /* 入场动画初始状态 */
+    opacity: 0;
+    transform: translateY(30px);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow-dark);
+}
+.top15-card.top15-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+.top15-card.top15-in:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow-dark);
+}
+/* 前3名特殊边框 */
+.top15-rank-1 { border: 2px solid #ffd700; }
+.top15-rank-2 { border: 2px solid #c0c0c0; }
+.top15-rank-3 { border: 2px solid #cd7f32; }
+/* 排名角标 */
+.top15-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--btn-bg);
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    backdrop-filter: blur(8px);
+}
+.top15-rank-1 .top15-badge { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a24; }
+.top15-rank-2 .top15-badge { background: linear-gradient(135deg, #e8e8e8, #b0b0b0); color: #1a1a24; }
+.top15-rank-3 .top15-badge { background: linear-gradient(135deg, #e8a060, #cd7f32); color: #1a1a24; }
+/* 图片区域 */
+.top15-img {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    background: var(--btn-bg);
+}
+.top15-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+.top15-card:hover .top15-img img {
+    transform: scale(1.08);
+}
+.top15-img-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-sub);
+    font-size: 13px;
+}
+/* 信息区域 */
+.top15-info {
+    padding: 14px;
+}
+.top15-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.top15-loc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+}
+/* 热度条 */
+.top15-heat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top15-heat-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--input-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.top15-heat-fill {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #ff6b35, #ff2d55);
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.top15-rank-1 .top15-heat-fill { background: linear-gradient(90deg, #ffd700, #ff6b35); }
+.top15-rank-2 .top15-heat-fill { background: linear-gradient(90deg, #c0c0c0, #ff6b35); }
+.top15-rank-3 .top15-heat-fill { background: linear-gradient(90deg, #cd7f32, #ff6b35); }
+.top15-heat-num {
+    font-size: 11px;
+    color: var(--text-sub);
+    white-space: nowrap;
+}
+/* 侧边天气栏 */
+.weather-sidebar {
+    flex-shrink: 0;
+    width: 80px;
+}
+.weather-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 16px var(--shadow-dark);
+}
+.weather-card:hover {
+    transform: translateY(-2px);
+}
+.vertical-weather-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    text-decoration: none;
+    letter-spacing: 8px;
+    padding: 16px 0;
+    transition: color 0.3s ease;
+}
+.vertical-weather-text:hover {
+    color: #58a6ff;
+}
+.page-content {
+    width: 100%;
+}
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+    color: var(--text-main);
+}
+.back-btn {
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-main);
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+html.light-mode .back-btn {
+    background: var(--light-btn-bg);
+}
+.back-btn:hover {
+    background: var(--btn-hover-bg);
+}
+html.light-mode .back-btn:hover {
+    background: var(--light-btn-hover-bg);
+}
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+/* 省份横幅网格 — 单列全宽 */
+#provinceGrid {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: none;
+}
+/* 搜索结果模式：一排三个 */
+#provinceGrid.search-mode {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+/* =============================================
+   省份横幅卡片 — GTA VI Vice City 风格
+   ============================================= */
+.province-banner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 24px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--shadow-dark);
+}
+.province-banner:hover {
+    box-shadow: 0 8px 24px var(--shadow-dark);
+}
+/* 序号 */
+.province-banner-index {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-sub);
+    min-width: 32px;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.5;
+}
+/* 主体 */
+.province-banner-body {
+    min-width: 0;
+}
+.province-banner-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+}
+.province-banner:hover .province-banner-name {
+    color: var(--neon, var(--accent-blue));
+    text-shadow: 0 0 20px var(--neon, var(--accent-blue));
+}
+/* 城市标签 */
+.province-banner-cities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.province-city-tag {
+    font-size: 12px;
+    color: var(--text-sub);
+    background: var(--input-bg);
+    padding: 4px 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+.province-banner:hover .province-city-tag {
+    background: var(--btn-hover-bg);
+    color: var(--text-main);
+}
+/* 箭头 */
+.province-banner-arrow {
+    font-size: 28px;
+    color: var(--text-sub);
+    margin-left: auto;
+    flex-shrink: 0;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+.province-banner:hover .province-banner-arrow {
+    color: var(--accent-blue);
+    transform: translateX(4px);
+}
+#spotGrid,
+#cityGrid {
+    grid-template-columns: 1fr !important;
+    max-width: 800px;
+    margin: 0 auto;
+}
+/* 卡片核心样式 */
+.card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 24px;
+    cursor: pointer;
+    border: 1px solid var(--border-light);
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s ease;
+    contain: layout paint;
+    box-shadow: 0 6px 16px var(--shadow-dark);
+    will-change: auto;
+}
+.card.float-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+.card.float-in:hover {
+    transform: translateY(-2px);
+}
+.card.float-in.active {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow-dark);
+}
+.city-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.city-card .card-content {
+    flex: 1;
+}
+.city-card .card-weather-link {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+.city-card .card-weather-link a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 14px;
+    background: var(--btn-bg);
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+html.light-mode .city-card .card-weather-link a {
+    background: var(--light-btn-bg);
+}
+.city-card .card-weather-link a:hover {
+    background: var(--btn-hover-bg);
+    text-decoration: underline;
+}
+html.light-mode .city-card .card-weather-link a:hover {
+    background: var(--light-btn-hover-bg);
+}
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+.card-desc {
+    font-size: 14px;
+    color: var(--text-sub);
+}
+.card-tip {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-top: 12px;
+    opacity: 0.8;
+}
+/* 景点展开区域 */
+.spot-expand {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s ease,
+                padding 0.4s ease;
+    margin-top: 16px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 0;
+    will-change: auto;
+}
+.spot-expand.active {
+    max-height: 700px;
+    opacity: 1;
+    padding-top: 16px;
+}
+.img-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: all 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.spot-expand.active .img-container {
+    opacity: 1;
+    transform: translateY(0);
+}
+.img-box {
+    width: 100%;
+    height: 180px;
+    background: var(--btn-bg);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-sub);
+    overflow: hidden;
+}
+.img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+    will-change: auto;
+}
+.img-box:hover img {
+    transform: scale(1.05);
+}
+.website-link {
+    display: inline-block;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 14px;
+    margin: 6px 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.spot-expand.active .website-link {
+    opacity: 1;
+    transform: translateY(0);
+}
+.website-link:hover {
+    color: #58a6ff;
+}
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* 大图查看器 */
+.viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    will-change: auto;
+}
+.viewer.hidden {
+    display: none;
+}
+.viewer-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+}
+.viewer-stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+#viewerImg {
+    pointer-events: auto;
+    max-width: 85vw;
+    max-height: 85vh;
+    border-radius: 10px;
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.2,0.8,0.2,1),
+                opacity 0.25s ease;
+    will-change: auto;
+}
+.nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 42px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px 18px;
+    border-radius: 10px;
+    z-index: 10;
+    transition: background 0.2s ease;
+}
+.nav:hover {
+    background: rgba(255,255,255,0.15);
+}
+.nav.left { left: 30px; }
+.nav.right { right: 30px; }
+.close {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    font-size: 26px;
+    background: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.close:hover {
+    color: #58a6ff;
+}
+/* 日月切换开关（无旋转、无缩放残留，适配导航） */
+.navbar-right .switch {
+  margin-left: 4px;
+  align-self: center;
+  --width-of-switch: 3.2em;
+  --height-of-switch: 1.8em;
+  --size-of-icon: 1.3em;
+  --slider-offset: 0.25em;
+  position: relative;
+  width: var(--width-of-switch);
+  height: var(--height-of-switch);
+  display: inline-block;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d0d0d8;
+  transition: .4s;
+  border-radius: 30px;
+}
+/* 滑块圆点 - 未勾选=太阳（浅色模式） */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: var(--size-of-icon);
+  width: var(--size-of-icon);
+  border-radius: 50%;
+  left: var(--slider-offset);
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(40deg,#ff9500,#ffcc00);
+  transition: .4s;
+}
+/* 深色模式下滑块背景色与按钮统一 */
+input:checked + .slider {
+  background-color: var(--btn-bg);
+}
+/* 勾选深色模式：月牙月亮（背景色与按钮统一） */
+input:checked + .slider:before {
+  left: calc(100% - (var(--size-of-icon) + var(--slider-offset)));
+  /* 月牙主体背景色与按钮一致 */
+  background: var(--btn-bg);
+  /* 月牙发光效果保留，仅调整主体背景 */
+  box-shadow: inset -7px -1px 0 0 #8983f7, inset -10px 0 0 -2px #a3dafb;
+}

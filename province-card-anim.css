@@ -1,0 +1,26 @@
+/* =============================================
+   省份卡片动画：缩放+上浮 同步效果
+   初始 0.7 倍 → 出现后 1 倍 + 上浮
+   ============================================= */
+
+/* 省份横幅 —— 初始状态 */
+.province-banner {
+    opacity: 0;
+    transform: translateY(40px) scale(0.5);
+    transition:
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease;
+}
+
+/* 省份横幅 —— 进入视口后 */
+.province-banner.banner-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* 省份横幅 —— hover */
+.province-banner.banner-in:hover {
+    transform: translateY(-3px) scale(1);
+    box-shadow: 0 8px 24px var(--shadow-dark);
+}
