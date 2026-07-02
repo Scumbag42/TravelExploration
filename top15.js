@@ -4,7 +4,7 @@
 // 注意：img 路径必须与 data.js 中实际存在的景点一致
 // =============================================
 const top15Spots = [
-    { rank: 1,  name: "故宫博物院",   province: "北京市",   city: "北京市",   heat: 9999, img: "/TravelExploration/images/北京/故宫博物院/1.jpg" },
+    { rank: 1,  name: "故宫博物院",   province: "北京市",   city: "北京市",   heat: 9999, img: "https://github.com/Scumbag42/TravelExploration/raw/main/images/北京/故宫博物院/1.jpg" },
     { rank: 2,  name: "八达岭长城",   province: "北京市",   city: "北京市",   heat: 9850, img: "https://github.com/Scumbag42/TravelExploration/blob/main/images/北京/八达岭长城/1.jpg" },
     { rank: 3,  name: "外滩",         province: "上海市",   city: "上海市",   heat: 9720, img: "https://github.com/Scumbag42/TravelExploration/blob/main/images/上海/外滩/1.jpg" },
     { rank: 4,  name: "东方明珠",     province: "上海市",   city: "上海市",   heat: 9680, img: "https://github.com/Scumbag42/TravelExploration/blob/main/images/上海/东方明珠/1.jpg" },
